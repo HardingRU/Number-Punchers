@@ -20,7 +20,7 @@ Last, not sure if I'll have a high score
 1) Create the logic in straightforward fashion
 2) Refactor Logic
 3) Create the visuals
-4) Add bells and whistles *optional*
+4) Add bells and whistles (high score, bad guys) *optional*
 
 *Links and Resources*
 - Play the game here: https://classicreload.com/number-munchers.html
