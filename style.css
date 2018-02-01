@@ -33,7 +33,11 @@ article {
 div {
   text-align: center;
   border: 1px solid red;
-  padding: 20px 0 20px 0;
+  padding: 42px 0 42px 0;
+}
+
+#rock {
+  content:url("https://ibb.co/nn5tKR")
 }
 
 button {

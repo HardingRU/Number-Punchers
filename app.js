@@ -37,7 +37,13 @@ class Gameboard {
 }
 
 // create first board
-let board = newGame(gameState);
+let $start = $("#startButton");
+let board;
+$start.on('click', function(){
+  board = newGame(gameState);
+  $("#startButton").remove();
+  $("#instructButton").remove();
+})
 
 // this runs to create a new game board on level completion
 function newGame(state) {
@@ -57,14 +63,12 @@ function createBoard() {
       board.set(i, j, randInt());
     }
   }
-  console.log('calling place board')
   placeBoard(board);
   return board;
 }
 
 // write board to the dom
 function placeBoard(board) {
-  console.log('placing board')
     for (let i = 0; i < 6; i++) {
 
       $("body").append("<article id=art"+i+">");
@@ -73,8 +77,23 @@ function placeBoard(board) {
           $("#art"+i).append("<div id="+i+"_"+j+" class=col"+j+">"+board.get(i, j)+"</div>");
       }
     }
+    replaceDiv("0_0");
 }
 
+// add the Rock to div as he moves around
+function replaceDiv(id) {
+  $("#"+id).text("");
+  $("#"+id).html('<img src="https://image.ibb.co/cWWYKR/Webp_net_resizeimage.jpg">');
+  $("#"+id).css("padding", "17px 0 17px 0")
+}
+
+// remove the Rock from div as he moves to next, and replace the value as needed
+function fixDiv(id) {
+  $("#"+id+" > img").remove();
+  console.log(board.get(gameState.xPos, gameState.yPos));
+  $("#"+id).text("" + board.get(gameState.xPos, gameState.yPos));
+  $("#"+id).css("padding","42px 0 42px 0");
+}
 
 
 // this function creates random integers, and is used to create the board
@@ -152,6 +171,7 @@ function checkAnswer(state, inboard) {
 
 function wrongAnswer() {
   gameState.lives -= 1;
+  alert("incorrect answer!");
   if(gameState.lives === 0) {
     console.log("Sorry, game over!");
     // ****** create a fuction here to deal with game over (do this)
@@ -227,22 +247,3 @@ function isPrime(value) {
 function rightAnswer() {
 
 }
-
-console.log(board);
-console.log(gameState);
-//placeBoard(board);
-/*move("l");
-checkAnswer(gameState, board);
-console.log(gameState);
-move("r");
-checkAnswer(gameState, board);
-console.log(gameState);
-move("r");
-checkAnswer(gameState, board);
-console.log(gameState);
-move("d");
-checkAnswer(gameState, board);
-console.log(gameState);
-move("d");
-checkAnswer(gameState, board);
-console.log(gameState);*/
