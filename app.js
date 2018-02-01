@@ -35,7 +35,20 @@ class Gameboard {
     this.content[y * this.width + x] = value;
   }
 }
+
+// create first board
 let board = newGame(gameState);
+
+// this runs to create a new game board on level completion
+function newGame(state) {
+  gameState = state;
+  gameState.xPos = 0;
+  gameState.yPos = 0;
+  let board = createBoard();
+  return board;
+}
+
+
 // this function creates a new gameboard
 function createBoard() {
   let board = new Gameboard(6, 5);
@@ -44,19 +57,25 @@ function createBoard() {
       board.set(i, j, randInt());
     }
   }
+  console.log('calling place board')
+  placeBoard(board);
   return board;
 }
 
 // write board to the dom
 function placeBoard(board) {
+  console.log('placing board')
     for (let i = 0; i < 6; i++) {
+
       $("body").append("<article id=art"+i+">");
       for (let j = 0; j < 5; j++) {
-        console.log(board.get(i, j));
+        // console.log(board.get(i, j));
           $("#art"+i).append("<div id="+i+"_"+j+" class=col"+j+">"+board.get(i, j)+"</div>");
       }
     }
 }
+
+
 
 // this function creates random integers, and is used to create the board
 function randInt() {
@@ -168,15 +187,6 @@ function checkBoard(state, inboard) {
     }
   }
   return true;
-}
-
-// this runs to create a new game board on level completion
-function newGame(state) {
-  gameState = state;
-  gameState.xPos = 0;
-  gameState.yPos = 0;
-  let board = createBoard();
-  return board;
 }
 
 // handle movement and manipulation of xPos and yPos of gameState
