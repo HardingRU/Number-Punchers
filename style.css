@@ -8,14 +8,19 @@
 }
 .col2 {
   float: left;
-  width: 20;
+  width: 20%;
 }
 .col3 {
   float: left;
-  width: 20;
+  width: 20%;
 }
 .col4 {
   float: left;
-  width: 20;
+  width: 20%;
   clear: right;
+}
+
+article {
+  padding: 20px;
+  clear: both;
 }
