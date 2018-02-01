@@ -1,7 +1,7 @@
-// need to create logic to prevent user from moving off of matrix
+
 
 // the initial game state, number represents the number you are finding multiples of.
-// number should be randomly set as part of board creation (fix this)
+// number should be randomly set as part of board creation
 // gameType is multiples (1), factors (2), and prime (3)
 
 // ****NOTE TO SELF do I need to ever pass the gameState to other functions, or can I just reference this one?
@@ -48,9 +48,14 @@ function createBoard() {
 }
 
 // write board to the dom
-function placeBoard() {
-  document.createElement('table');
-
+function placeBoard(board) {
+    for (let i = 0; i < 6; i++) {
+      $("body").append("<article id=art"+i+">");
+      for (let j = 0; j < 5; j++) {
+        console.log(board.get(i, j));
+          $("#art"+i).append("<div id="+i+"_"+j+" class=col"+j+">"+board.get(i, j)+"</div>");
+      }
+    }
 }
 
 // this function creates random integers, and is used to create the board
@@ -215,7 +220,8 @@ function rightAnswer() {
 
 console.log(board);
 console.log(gameState);
-move("l");
+//placeBoard(board);
+/*move("l");
 checkAnswer(gameState, board);
 console.log(gameState);
 move("r");
@@ -229,4 +235,4 @@ checkAnswer(gameState, board);
 console.log(gameState);
 move("d");
 checkAnswer(gameState, board);
-console.log(gameState);
+console.log(gameState);*/

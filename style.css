@@ -1,0 +1,21 @@
+.col0 {
+  float: left;
+  width: 20%;
+}
+.col1 {
+  float: left;
+  width: 20%;
+}
+.col2 {
+  float: left;
+  width: 20;
+}
+.col3 {
+  float: left;
+  width: 20;
+}
+.col4 {
+  float: left;
+  width: 20;
+  clear: right;
+}
