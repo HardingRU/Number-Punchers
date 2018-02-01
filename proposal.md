@@ -17,10 +17,10 @@ The only other real difficult part I see is around the logic.  Assuming that the
 Last, not sure if I'll have a high score
 
 *Phases of Completion*
-1) Create the logic in straightforward fashion
-2) Refactor Logic
-3) Create the visuals
-4) Add bells and whistles (high score, bad guys) *optional*
+1) Create the logic in straightforward fashion (done)
+2) Refactor Logic (Friday)
+3) Create the visuals (Started, Finish Monday)
+4) Add bells and whistles (high score, bad guys) *optional* (Tuesday)
 
 *Links and Resources*
 - Play the game here: https://classicreload.com/number-munchers.html
