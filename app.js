@@ -6,7 +6,7 @@
 
 // ****NOTE TO SELF do I need to ever pass the gameState to other functions, or can I just reference this one?
 let gameState = {
-  level: 0;
+  level: 0,
   score: 0,
   lives: 4,
   number: 2,
@@ -50,7 +50,7 @@ $start.on('click', function(){
 // this runs to create a new game board on level completion
 function newGame(state) {
   gameState = state;
-  level += 1;
+  gameState.level += 1;
   gameState.xPos = 0;
   gameState.yPos = 0;
   let board = createBoard();
@@ -123,7 +123,7 @@ function checkAnswer(state, inboard) {
     case(1):
     if (answer % state.number === 0) {
       state.score += 50;
-      board.set(state.xPos, state.yPos, null);
+      board.set(state.xPos, state.yPos, "");
       let levelClear = checkBoard(state, inboard);
       // if the game is over create a new level
       if(levelClear === true) {
@@ -155,12 +155,14 @@ function checkAnswer(state, inboard) {
     // check answer against prime algorithm
     case(3):
     if(isPrime(answer) === true) {
-      state.score += 50;
-      board.set(state.xPos, state.yPos, null);
+      gameState.score += 50;
+      $("#score").text("Score: " + gameState.score);
+      board.set(gameState.xPos, gameState.yPos, "");
+      console.log(board.get(gameState.xPos, gameState.yPos));
       let levelClear = checkBoard(state, inboard);
       // if the game is over create a new level
       if(levelClear === true) {
-        newGame(state);
+      //  newGame(state);
       }
     }
     else {
@@ -216,6 +218,7 @@ function checkBoard(state, inboard) {
 
 // handle movement and manipulation of xPos and yPos of gameState
 function move(direction) {
+  console.log("game value before move" + board.get(gameState.xPos, gameState.yPos));
   switch(direction) {
     case("l"):
       if(gameState.yPos != 0) {
