@@ -26,12 +26,24 @@ body {
 
 footer {
   color: white;
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 25px;
 }
+
+h2 {
+  margin: 0px;
+  color: white;
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 25px;
+}
+
+
+
 
 .heading {
   text-align: center;
   font-family: 'Ubuntu', sans-serif;
-  margin: 0 0 40px 0;
+  margin: 0 0 -20px 0;
   color: white;
 }
 
@@ -49,10 +61,18 @@ div {
 
 button {
   font-size: 20px;
-  margin: 10px auto;
+  margin: 60px auto 30px auto;
   display: block;
   padding: 10px;
   color: white;
   font-family: 'Ubuntu', sans-serif;
   background-color: rgb(250, 68, 0);
+}
+
+
+
+
+#lives {
+  float: right;
+  margin: 0 60px 0 0;
 }

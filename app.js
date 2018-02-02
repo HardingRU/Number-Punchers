@@ -72,7 +72,8 @@ function createBoard() {
 
 // write board to the dom
 function placeBoard(board) {
-    $("header").append("<h1 class=heading>Find all of the Prime Numbers!</h1>")
+    $("header").append("<h1 class=heading>Find all of the Prime Numbers!</h1>");
+    $("header").append("<h2 class=levels>Level: " + gameState.level + "</h2>");
     $("footer").append("<span id=score>Score: " + gameState.score + "</span> <span id=lives>Lives: " + gameState.lives + "</span>");
     for (let i = 0; i < 6; i++) {
 
@@ -93,10 +94,10 @@ function replaceDiv(id) {
 }
 
 // remove the Rock from div as he moves to next, and replace the value as needed
-function fixDiv(id) {
+function fixDiv(id, num) {
+  //console.log(num);
   $("#"+id+" > img").remove();
-  console.log(board.get(gameState.xPos, gameState.yPos));
-  $("#"+id).text("" + board.get(gameState.xPos, gameState.yPos));
+  $("#"+id).text("" + num);
   $("#"+id).css("padding","42px 0 42px 0");
 }
 
@@ -157,7 +158,7 @@ function checkAnswer(state, inboard) {
     if(isPrime(answer) === true) {
       gameState.score += 50;
       $("#score").text("Score: " + gameState.score);
-      board.set(gameState.xPos, gameState.yPos, "");
+      board.set(gameState.xPos, gameState.yPos, "_");
       console.log(board.get(gameState.xPos, gameState.yPos));
       let levelClear = checkBoard(state, inboard);
       // if the game is over create a new level
@@ -178,9 +179,10 @@ function checkAnswer(state, inboard) {
 
 function wrongAnswer() {
   gameState.lives -= 1;
+  $("#lives").text("Lives: " + gameState.lives);
   alert("incorrect answer!");
   if(gameState.lives === 0) {
-    console.log("Sorry, game over!");
+    alert("Sorry, game over!");
     // ****** create a fuction here to deal with game over (do this)
     return;
   }
@@ -218,34 +220,34 @@ function checkBoard(state, inboard) {
 
 // handle movement and manipulation of xPos and yPos of gameState
 function move(direction) {
-  console.log("game value before move" + board.get(gameState.xPos, gameState.yPos));
   switch(direction) {
     case("l"):
       if(gameState.yPos != 0) {
       gameState.yPos -= 1;
       replaceDiv(gameState.xPos + "_" + gameState.yPos);
-      fixDiv(gameState.xPos + "_" + (gameState.yPos + 1));
+      fixDiv((gameState.xPos + "_" + (gameState.yPos + 1)), (board.get(gameState.xPos, (gameState.yPos + 1))));
       }
       break;
     case("r"):
       if(gameState.yPos != 4) {
       gameState.yPos += 1;
       replaceDiv(gameState.xPos + "_" + gameState.yPos);
-      fixDiv(gameState.xPos + "_" + (gameState.yPos - 1));
+      fixDiv((gameState.xPos + "_" + (gameState.yPos - 1)), (board.get(gameState.xPos,(gameState.yPos - 1))));
+      console.log(board.get(gameState.xPos, gameState.yPos - 1));
       }
       break;
     case("u"):
       if(gameState.xPos != 0) {
       gameState.xPos -= 1;
       replaceDiv(gameState.xPos + "_" + gameState.yPos);
-      fixDiv((gameState.xPos + 1 ) + "_" + gameState.yPos);
+      fixDiv(((gameState.xPos + 1 ) + "_" + gameState.yPos), (board.get((gameState.xPos + 1 ), gameState.yPos)));
       }
       break;
     case("d"):
       if(gameState.xPos != 5) {
       gameState.xPos += 1;
       replaceDiv(gameState.xPos + "_" + gameState.yPos);
-      fixDiv((gameState.xPos - 1 ) + "_" + gameState.yPos);
+      fixDiv(((gameState.xPos - 1 ) + "_" + gameState.yPos), (board.get((gameState.xPos + - 1 ), gameState.yPos)));
       }
       break;
   }
