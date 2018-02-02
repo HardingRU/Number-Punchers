@@ -6,6 +6,7 @@
 
 // ****NOTE TO SELF do I need to ever pass the gameState to other functions, or can I just reference this one?
 let gameState = {
+  level: 0;
   score: 0,
   lives: 4,
   number: 2,
@@ -49,6 +50,7 @@ $start.on('click', function(){
 // this runs to create a new game board on level completion
 function newGame(state) {
   gameState = state;
+  level += 1;
   gameState.xPos = 0;
   gameState.yPos = 0;
   let board = createBoard();
@@ -71,7 +73,7 @@ function createBoard() {
 // write board to the dom
 function placeBoard(board) {
     $("header").append("<h1 class=heading>Find all of the Prime Numbers!</h1>")
-    $("footer").append("<span>Footer</span>")
+    $("footer").append("<span id=score>Score: " + gameState.score + "</span> <span id=lives>Lives: " + gameState.lives + "</span>");
     for (let i = 0; i < 6; i++) {
 
       $("main").append("<article id=art"+i+">");
@@ -215,24 +217,32 @@ function checkBoard(state, inboard) {
 // handle movement and manipulation of xPos and yPos of gameState
 function move(direction) {
   switch(direction) {
-    case("u"):
+    case("l"):
       if(gameState.yPos != 0) {
       gameState.yPos -= 1;
-      }
-      break;
-    case("d"):
-      if(gameState.yPos != 4) {
-      gameState.yPos += 1;
-      }
-      break;
-    case("l"):
-      if(gameState.xPos != 0) {
-      gameState.xPos -= 1;
+      replaceDiv(gameState.xPos + "_" + gameState.yPos);
+      fixDiv(gameState.xPos + "_" + (gameState.yPos + 1));
       }
       break;
     case("r"):
+      if(gameState.yPos != 4) {
+      gameState.yPos += 1;
+      replaceDiv(gameState.xPos + "_" + gameState.yPos);
+      fixDiv(gameState.xPos + "_" + (gameState.yPos - 1));
+      }
+      break;
+    case("u"):
+      if(gameState.xPos != 0) {
+      gameState.xPos -= 1;
+      replaceDiv(gameState.xPos + "_" + gameState.yPos);
+      fixDiv((gameState.xPos + 1 ) + "_" + gameState.yPos);
+      }
+      break;
+    case("d"):
       if(gameState.xPos != 5) {
       gameState.xPos += 1;
+      replaceDiv(gameState.xPos + "_" + gameState.yPos);
+      fixDiv((gameState.xPos - 1 ) + "_" + gameState.yPos);
       }
       break;
   }
