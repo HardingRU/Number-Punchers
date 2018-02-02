@@ -60,9 +60,9 @@ function newGame(state) {
 
 // this function creates a new gameboard
 function createBoard() {
-  let board = new Gameboard(6, 5);
-  for (let i = 0; i <= board.width; i++) {
-    for (let j = 0; j <= board.height; j++) {
+  let board = new Gameboard(6,5);
+  for (let i = 0; i < board.width; i++) {
+    for (let j = 0; j < board.height; j++) {
       board.set(i, j, randInt());
     }
   }
@@ -70,15 +70,42 @@ function createBoard() {
   return board;
 }
 
+// tracks keystrokes for movement and selection of answer
+$(document).keydown(function(e) {
+    switch(e.which) {
+        case 37: // left
+        move("l");
+        break;
+
+        case 38: // up
+        move("u");
+        break;
+
+        case 39: // right
+        move("r");
+        break;
+
+        case 40: // down
+        move("d");
+        break;
+
+        case 32:
+        checkAnswer(gameState, board);
+
+        default: return; // exit this handler for other keys
+    }
+    e.preventDefault(); // prevent the default action (scroll / move caret)
+});
+
 // write board to the dom
 function placeBoard(board) {
     $("header").append("<h1 class=heading>Find all of the Prime Numbers!</h1>");
     $("header").append("<h2 class=levels>Level: " + gameState.level + "</h2>");
     $("footer").append("<span id=score>Score: " + gameState.score + "</span> <span id=lives>Lives: " + gameState.lives + "</span>");
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < board.width; i++) {
 
       $("main").append("<article id=art"+i+">");
-      for (let j = 0; j < 5; j++) {
+      for (let j = 0; j < board.height; j++) {
         // console.log(board.get(i, j));
           $("#art"+i).append("<div id="+i+"_"+j+" class=col"+j+">"+board.get(i, j)+"</div>");
       }
@@ -114,7 +141,7 @@ function checkAnswer(state, inboard) {
   let answer = board.get(state.xPos, state.yPos);
   console.log(answer);
   // checking for empty space, nothing should happen here
-  if (answer === null) {
+  if (answer === "_") {
     return;
   }
 
@@ -160,10 +187,11 @@ function checkAnswer(state, inboard) {
       $("#score").text("Score: " + gameState.score);
       board.set(gameState.xPos, gameState.yPos, "_");
       console.log(board.get(gameState.xPos, gameState.yPos));
-      let levelClear = checkBoard(state, inboard);
+      let levelClear = checkBoard(gameState, board);
       // if the game is over create a new level
+      console.log("levelclear >>> " + levelClear);
       if(levelClear === true) {
-      //  newGame(state);
+      alert("You won!")
       }
     }
     else {
@@ -187,31 +215,39 @@ function wrongAnswer() {
     return;
   }
 }
-// this function is called when user munchers correct number, to see if they have beaten the level
-function checkBoard(state, inboard) {
-  for(let i = 0; i <= board.width; i++) {
-    for(let j = 0; j <= board.height; j++) {
-      switch(state.gameType) {
-        // checking board for any remaining multiples
-        case(1):
-        if(board.get(state.xPos,state.yPos) % state.number === 0) {
-          return false;
-        }
-        break;
+// this function is called when user munches correct number, to see if they have beaten the level
+function checkBoard() {
+  for(let i = 0; i < board.width; i++) {
+    for(let j = 0; j < board.height; j++) {
+      if(board.get(i, j) === "_") {
+      }
+      else {
+        switch(gameState.gameType) {
+          // checking board for any remaining multiples
+          case(1):
+          if(board.get(gameState.xPos,gameState.yPos) % gameState.number === 0) {
+            return false;
+          }
+          break;
 
-        // checking board for any remaining factors
-        case(2):
-        if(state.number % (board.get(state.xPos,state.yPos)) === 0) {
-          return false;
-        }
-        break;
+          // checking board for any remaining factors
+          case(2):
+          if(gameState.number % (board.get(gameState.xPos,gameState.yPos)) === 0) {
+            return false;
+          }
+          break;
 
-        // checking board for any remaining primes
-        case(3):
-        if(isPrime(board.get(state.xPos, state.yPos)) === false){
-          return false;
+          // checking board for any remaining primes
+          case(3):
+          console.log("checking isPrime")
+          console.log(i+ " " + j)
+          console.log(board.get(i,j));
+          if(isPrime(board.get(i, j)) === true) {
+            console.log('test')
+            return false;
+          }
+          break;
         }
-        break;
       }
     }
   }
@@ -233,7 +269,6 @@ function move(direction) {
       gameState.yPos += 1;
       replaceDiv(gameState.xPos + "_" + gameState.yPos);
       fixDiv((gameState.xPos + "_" + (gameState.yPos - 1)), (board.get(gameState.xPos,(gameState.yPos - 1))));
-      console.log(board.get(gameState.xPos, gameState.yPos - 1));
       }
       break;
     case("u"):
@@ -251,6 +286,7 @@ function move(direction) {
       }
       break;
   }
+  console.log(gameState.xPos + ", " + gameState.yPos);
 }
 
 function isPrime(value) {
