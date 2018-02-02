@@ -43,6 +43,7 @@ $start.on('click', function(){
   board = newGame(gameState);
   $("#startButton").remove();
   $("#instructButton").remove();
+  $("#intro").remove();
 })
 
 // this runs to create a new game board on level completion
@@ -69,9 +70,11 @@ function createBoard() {
 
 // write board to the dom
 function placeBoard(board) {
+    $("header").append("<h1 class=heading>Find all of the Prime Numbers!</h1>")
+    $("footer").append("<span>Footer</span>")
     for (let i = 0; i < 6; i++) {
 
-      $("body").append("<article id=art"+i+">");
+      $("main").append("<article id=art"+i+">");
       for (let j = 0; j < 5; j++) {
         // console.log(board.get(i, j));
           $("#art"+i).append("<div id="+i+"_"+j+" class=col"+j+">"+board.get(i, j)+"</div>");

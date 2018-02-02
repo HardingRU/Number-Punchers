@@ -21,6 +21,7 @@ Last, not sure if I'll have ability to save high scores or not.
 2) Refactor Logic (Friday)
 3) Create the visuals (Started, Finish Monday)
 4) Add bells and whistles (high score, bad guys) *optional* (Tuesday)
+5) Other options: cute quotes about math random each level
 
 ## Links and Resources
 - Play the game here: https://classicreload.com/number-munchers.html
