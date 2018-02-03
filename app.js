@@ -1,5 +1,3 @@
-
-
 // our gamestate initialization
 // number is the target they are trying to get (i.e. factors of X, multiples of Y); does not apply to primes
 // gameType is multiples (1), factors (2), and prime (3)
@@ -7,7 +5,7 @@ let gameState = {
   level: 0,
   score: 0,
   lives: 4,
-  number: 2,
+  number: 0,
   gameType: 0,
   xPos: 0,
   yPos: 0
@@ -78,17 +76,17 @@ function newGame() {
 function createLevel1(board, i, j) {
   switch(gameState.gameType) {
     case(1):
-    gameState.number = multiples1[randInt(3)-1];
-    board.set(i, j, (randInt(27) + 3));
+      gameState.number = multiples1[randInt(3)-1];
+      board.set(i, j, (randInt(27) + 3));
     break;
 
     case(2):
-    gameState.number = factors1[randInt(3)-1];
-    board.set(i, j, randInt(6));
+      gameState.number = factors1[randInt(3)-1];
+      board.set(i, j, randInt(6));
     break;
 
     case(3):
-    board.set(i, j, randInt(20));
+      board.set(i, j, randInt(20));
     break;
   }
 }
@@ -97,17 +95,17 @@ function createLevel1(board, i, j) {
 function createLevel6(board, i, j) {
   switch(gameState.gameType) {
     case(1):
-    gameState.number = multiples2[randInt(3)-1];
-    board.set(i, j, (randInt(21) + 19));
+      gameState.number = multiples2[randInt(3)-1];
+      board.set(i, j, (randInt(21) + 19));
     break;
 
     case(2):
-    gameState.number = factors2[randInt(3)-1];
-    board.set(i, j, (randInt(9) + 3));
+      gameState.number = factors2[randInt(3)-1];
+      board.set(i, j, (randInt(9) + 3));
     break;
 
     case(3):
-    board.set(i, j, (randInt(26)+23));
+      board.set(i, j, (randInt(26)+23));
     break;
   }
 }
@@ -134,23 +132,23 @@ function createBoard() {
 $(document).keydown(function(e) {
     switch(e.which) {
         case 37: // left
-        move("l");
+          move("l");
         break;
 
         case 38: // up
-        move("u");
+          move("u");
         break;
 
         case 39: // right
-        move("r");
+          move("r");
         break;
 
         case 40: // down
-        move("d");
+          move("d");
         break;
 
         case 32:
-        checkAnswer(gameState, board);
+          checkAnswer(gameState, board);
 
         default: return; // exit this handler for other keys
     }
@@ -161,16 +159,16 @@ $(document).keydown(function(e) {
 function placeBoard(board, gameType) {
     switch(gameType) {
       case 1:
-      $("header").append("<h1 class=heading>Find all of the Multiples of " + gameState.number +"!</h1>")
+        $("header").append("<h1 class=heading>Find all of the Multiples of " + gameState.number +"!</h1>")
       break;
 
       case 2:
-      $("header").append("<h1 class=heading>Find all of the Factors of " + gameState.number +"!</h1>")
+        $("header").append("<h1 class=heading>Find all of the Factors of " + gameState.number +"!</h1>")
 
       break;
 
       case 3:
-      $("header").append("<h1 class=heading>Find all of the Prime Numbers!</h1>");
+        $("header").append("<h1 class=heading>Find all of the Prime Numbers!</h1>");
       break;
     }
     $("header").append("<h2 class=levels>Level: " + gameState.level + "</h2>");
@@ -293,29 +291,35 @@ function checkBoard() {
         switch(gameState.gameType) {
           // checking board for any remaining multiples
           case(1):
-          if(board.get(i,j) % gameState.number === 0) {
-            return false;
-          }
+            if(board.get(i,j) % gameState.number === 0) {
+              return false;
+            }
           break;
 
           // checking board for any remaining factors
           case(2):
-          if(gameState.number % (board.get(i,j)) === 0) {
-            return false;
-          }
+            if(gameState.number % (board.get(i,j)) === 0) {
+              return false;
+            }
           break;
 
           // checking board for any remaining primes
           case(3):
-          if(isPrime(board.get(i, j)) === true) {
-            return false;
-          }
+            if(isPrime(board.get(i, j)) === true) {
+              return false;
+            }
           break;
         }
       }
     }
   }
-  alert("Level complete!");
+  if (gameState.level === 5) {
+    alert("Level 5 complete, difficulty increasing!")
+  }
+  else{
+    alert("Level complete!");
+  }
+
   return true;
 }
 
@@ -329,28 +333,28 @@ function move(direction) {
       replaceDiv(gameState.xPos + "_" + gameState.yPos);
       fixDiv((gameState.xPos + "_" + (gameState.yPos + 1)), (board.get(gameState.xPos, (gameState.yPos + 1))));
       }
-      break;
+    break;
     case("r"):
       if(gameState.yPos != 4) {
       gameState.yPos += 1;
       replaceDiv(gameState.xPos + "_" + gameState.yPos);
       fixDiv((gameState.xPos + "_" + (gameState.yPos - 1)), (board.get(gameState.xPos,(gameState.yPos - 1))));
       }
-      break;
+    break;
     case("u"):
       if(gameState.xPos != 0) {
       gameState.xPos -= 1;
       replaceDiv(gameState.xPos + "_" + gameState.yPos);
       fixDiv(((gameState.xPos + 1 ) + "_" + gameState.yPos), (board.get((gameState.xPos + 1 ), gameState.yPos)));
       }
-      break;
+    break;
     case("d"):
       if(gameState.xPos != 5) {
       gameState.xPos += 1;
       replaceDiv(gameState.xPos + "_" + gameState.yPos);
       fixDiv(((gameState.xPos - 1 ) + "_" + gameState.yPos), (board.get((gameState.xPos + - 1 ), gameState.yPos)));
       }
-      break;
+    break;
   }
 }
 
