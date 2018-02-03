@@ -1,19 +1,25 @@
 
-// the initial game state, number represents the number you are finding multiples of.
-// number should be randomly set as part of board creation
-// gameType is multiples (1), factors (2), and prime (3)
 
-// ****NOTE TO SELF do I need to ever pass the gameState to other functions, or can I just reference this one?
+// our gamestate initialization
+// number is the target they are trying to get (i.e. factors of X, multiples of Y); does not apply to primes
+// gameType is multiples (1), factors (2), and prime (3)
 let gameState = {
   level: 0,
   score: 0,
   lives: 4,
   number: 2,
-  gameType: 3,
+  gameType: 0,
   xPos: 0,
   yPos: 0
 }
 
+//these are the potential target numbers (see: gameState) for level 1-5 (factors1/multiples1) and 6-10 (f2/m2)
+let factors1 = [15, 20, 30];
+let factors2 = [18, 24, 42];
+let multiples1 = [2, 3, 4];
+let multiples2 = [5, 6, 8];
+
+// create initial (empty) board;
 let board;
 
 // this class defines a Gameboard, and was borrowed from eloquent javascript chap 5
@@ -38,7 +44,7 @@ class Gameboard {
   }
 }
 
-// create first board
+// create first board, remove landing screen
 let $start = $("#startButton");
 $start.on('click', function(){
   board = newGame(gameState);
@@ -50,7 +56,7 @@ $start.on('click', function(){
 })
 
 
-// function to create gameBoard
+// function to create gameBoard, select gameType (see gameState)
 function newGame() {
   $("article").remove();
   $("span").remove();
@@ -61,20 +67,66 @@ function newGame() {
   gameState.xPos = 0;
   gameState.yPos = 0;
   gameState.gameType = randInt(3);
-  board = createBoard(gameState.gameType);
+  board = createBoard();
   return board;
 
 }
 
-// this function creates a new gameboard
-function createBoard(gameType) {
-  let board = new Gameboard(6,5);
+//logic to create gameboards for levels 1-5
+//notice that the board.setting is limiting the board number options to predefined windows
+//these predefined windows are in coordination with the target number for a given level / gameType
+function createLevel1(board, i, j) {
+  switch(gameState.gameType) {
+    case(1):
+    gameState.number = multiples1[randInt(3)-1];
+    board.set(i, j, (randInt(27) + 3));
+    break;
+
+    case(2):
+    gameState.number = factors1[randInt(3)-1];
+    board.set(i, j, randInt(6));
+    break;
+
+    case(3):
+    board.set(i, j, randInt(20));
+    break;
+  }
+}
+
+//logic to create gameboards for levels 6-10
+function createLevel6(board, i, j) {
+  switch(gameState.gameType) {
+    case(1):
+    gameState.number = multiples2[randInt(3)-1];
+    board.set(i, j, (randInt(21) + 19));
+    break;
+
+    case(2):
+    gameState.number = factors2[randInt(3)-1];
+    board.set(i, j, (randInt(9) + 3));
+    break;
+
+    case(3):
+    board.set(i, j, (randInt(26)+23));
+    break;
+  }
+}
+
+// this function creates a new gameboard, depending on the level and gameType
+function createBoard() {
+  board = new Gameboard(6,5);
   for (let i = 0; i < board.width; i++) {
     for (let j = 0; j < board.height; j++) {
-      board.set(i, j, randInt(20));
+      if (gameState.level < 6 )
+      {
+        createLevel1(board, i, j);
+      }
+      else {
+        createLevel6(board, i, j);
+      }
     }
   }
-  placeBoard(board, gameType);
+  placeBoard(board, gameState.gameType);
   return board;
 }
 
@@ -143,13 +195,12 @@ function replaceDiv(id) {
 
 // remove the Rock from div as he moves to next, and replace the value as needed
 function fixDiv(id, num) {
-  //console.log(num);
   $("#"+id+" > img").remove();
   $("#"+id).text("" + num);
   $("#"+id).css("padding","42px 0 42px 0");
 }
 
-// this function creates random integers, used to create board, as well as select gameType
+// this function creates random integers, used to create board, as well as select gameType, and target numbers
 function randInt(ceiling) {
   randDec = Math.random();
   randWhole = Math.floor(randDec * ceiling) + 1;
@@ -210,7 +261,6 @@ function checkAnswer() {
       let levelClear = checkBoard(gameState, board);
       // if the game is over create a new level
       if(levelClear === true) {
-      alert("You won!")
       newGame();
       }
     }
@@ -219,7 +269,6 @@ function checkAnswer() {
     }
     break;
   }
-
   return;
 }
 
@@ -230,7 +279,6 @@ function wrongAnswer() {
   alert("That answer is incorrect!");
   if(gameState.lives === 0) {
     gameOver();
-    // ****** create a fuction here to deal with game over (do this)
     return;
   }
 }
@@ -272,6 +320,7 @@ function checkBoard() {
 }
 
 // handle movement and manipulation of xPos and yPos of gameState
+// handle manipulating the DOM to move character around / replace values that he moves off of
 function move(direction) {
   switch(direction) {
     case("l"):
@@ -315,7 +364,7 @@ function isPrime(value) {
   return true;
 }
 
-
+// handle gameOver when lives hits 0
 function gameOver() {
   let input = prompt("Game over!  Your score is " +gameState.score+ " -- great job!  Would you like to play again? (y/n)");
   if (input === "y") {
