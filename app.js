@@ -1,5 +1,4 @@
 
-
 // the initial game state, number represents the number you are finding multiples of.
 // number should be randomly set as part of board creation
 // gameType is multiples (1), factors (2), and prime (3)
@@ -14,6 +13,8 @@ let gameState = {
   xPos: 0,
   yPos: 0
 }
+
+let board;
 
 // this class defines a Gameboard, and was borrowed from eloquent javascript chap 5
 class Gameboard {
@@ -39,38 +40,45 @@ class Gameboard {
 
 // create first board
 let $start = $("#startButton");
-let board;
 $start.on('click', function(){
   board = newGame(gameState);
   $("#startButton").remove();
-  $("#instructButton").remove();
   $("#intro").remove();
+  $("instructions").remove();
+  $("h3").remove();
+  $("br").remove();
 })
 
-// this runs to create a new game board on level completion
-function newGame(state) {
-  gameState = state;
+
+// function to create gameBoard
+function newGame() {
+  $("article").remove();
+  $("span").remove();
+  $("div").remove();
+  $("h1").remove();
+  $("h2").remove();
   gameState.level += 1;
   gameState.xPos = 0;
   gameState.yPos = 0;
-  let board = createBoard();
+  gameState.gameType = randInt(3);
+  board = createBoard(gameState.gameType);
   return board;
+
 }
 
-
 // this function creates a new gameboard
-function createBoard() {
+function createBoard(gameType) {
   let board = new Gameboard(6,5);
   for (let i = 0; i < board.width; i++) {
     for (let j = 0; j < board.height; j++) {
-      board.set(i, j, randInt());
+      board.set(i, j, randInt(20));
     }
   }
-  placeBoard(board);
+  placeBoard(board, gameType);
   return board;
 }
 
-// tracks keystrokes for movement and selection of answer
+// determine keystrokes (found this function on stackoverflow)
 $(document).keydown(function(e) {
     switch(e.which) {
         case 37: // left
@@ -94,12 +102,25 @@ $(document).keydown(function(e) {
 
         default: return; // exit this handler for other keys
     }
-    e.preventDefault(); // prevent the default action (scroll / move caret)
+    e.preventDefault(); // prevent the default action
 });
 
 // write board to the dom
-function placeBoard(board) {
-    $("header").append("<h1 class=heading>Find all of the Prime Numbers!</h1>");
+function placeBoard(board, gameType) {
+    switch(gameType) {
+      case 1:
+      $("header").append("<h1 class=heading>Find all of the Multiples of " + gameState.number +"!</h1>")
+      break;
+
+      case 2:
+      $("header").append("<h1 class=heading>Find all of the Factors of " + gameState.number +"!</h1>")
+
+      break;
+
+      case 3:
+      $("header").append("<h1 class=heading>Find all of the Prime Numbers!</h1>");
+      break;
+    }
     $("header").append("<h2 class=levels>Level: " + gameState.level + "</h2>");
     $("footer").append("<span id=score>Score: " + gameState.score + "</span> <span id=lives>Lives: " + gameState.lives + "</span>");
     for (let i = 0; i < board.width; i++) {
@@ -128,34 +149,33 @@ function fixDiv(id, num) {
   $("#"+id).css("padding","42px 0 42px 0");
 }
 
-
-// this function creates random integers, and is used to create the board
-function randInt() {
+// this function creates random integers, used to create board, as well as select gameType
+function randInt(ceiling) {
   randDec = Math.random();
-  randWhole = Math.floor(randDec * 20) + 1;
+  randWhole = Math.floor(randDec * ceiling) + 1;
   return randWhole;
 }
 
 // this function is called when the user munchers a number, to see if it is correct or not
-function checkAnswer(state, inboard) {
-  let answer = board.get(state.xPos, state.yPos);
-  console.log(answer);
+function checkAnswer() {
+  let answer = board.get(gameState.xPos, gameState.yPos);
   // checking for empty space, nothing should happen here
   if (answer === "_") {
     return;
   }
 
   // logic to proceed on correct answer
-  switch(state.gameType) {
+  switch(gameState.gameType) {
     // check answer against multiple algorithm
     case(1):
-    if (answer % state.number === 0) {
-      state.score += 50;
-      board.set(state.xPos, state.yPos, "");
-      let levelClear = checkBoard(state, inboard);
+    if (answer % gameState.number === 0) {
+      gameState.score += 50;
+      $("#score").text("Score: " + gameState.score);
+      board.set(gameState.xPos, gameState.yPos, "_");
+      let levelClear = checkBoard(gameState, board);
       // if the game is over create a new level
       if(levelClear === true) {
-        newGame(state);
+        newGame(gameState);
       }
     }
     // logic to proceed on wrong answer
@@ -166,13 +186,14 @@ function checkAnswer(state, inboard) {
 
     // check answer against factor algorithm
     case(2):
-    if (state.number % answer === 0) {
-      state.score += 50;
-      board.set(state.xPos, state.yPos, null);
-      let levelClear = checkBoard(state, inboard);
+    if (gameState.number % answer === 0) {
+      gameState.score += 50;
+      $("#score").text("Score: " + gameState.score);
+      board.set(gameState.xPos, gameState.yPos, "_");
+      let levelClear = checkBoard(gameState, board);
       // if the game is over create a new level
       if(levelClear === true) {
-        newGame(state);
+        newGame(gameState);
       }
     }
     else {
@@ -186,12 +207,11 @@ function checkAnswer(state, inboard) {
       gameState.score += 50;
       $("#score").text("Score: " + gameState.score);
       board.set(gameState.xPos, gameState.yPos, "_");
-      console.log(board.get(gameState.xPos, gameState.yPos));
       let levelClear = checkBoard(gameState, board);
       // if the game is over create a new level
-      console.log("levelclear >>> " + levelClear);
       if(levelClear === true) {
       alert("You won!")
+      newGame();
       }
     }
     else {
@@ -200,17 +220,16 @@ function checkAnswer(state, inboard) {
     break;
   }
 
-  gameState = state;
-  board = inboard;
   return;
 }
 
+// process wrong answers
 function wrongAnswer() {
   gameState.lives -= 1;
   $("#lives").text("Lives: " + gameState.lives);
-  alert("incorrect answer!");
+  alert("That answer is incorrect!");
   if(gameState.lives === 0) {
-    alert("Sorry, game over!");
+    gameOver();
     // ****** create a fuction here to deal with game over (do this)
     return;
   }
@@ -219,31 +238,28 @@ function wrongAnswer() {
 function checkBoard() {
   for(let i = 0; i < board.width; i++) {
     for(let j = 0; j < board.height; j++) {
+      //ignore _ strings, those are correct previous answers
       if(board.get(i, j) === "_") {
       }
       else {
         switch(gameState.gameType) {
           // checking board for any remaining multiples
           case(1):
-          if(board.get(gameState.xPos,gameState.yPos) % gameState.number === 0) {
+          if(board.get(i,j) % gameState.number === 0) {
             return false;
           }
           break;
 
           // checking board for any remaining factors
           case(2):
-          if(gameState.number % (board.get(gameState.xPos,gameState.yPos)) === 0) {
+          if(gameState.number % (board.get(i,j)) === 0) {
             return false;
           }
           break;
 
           // checking board for any remaining primes
           case(3):
-          console.log("checking isPrime")
-          console.log(i+ " " + j)
-          console.log(board.get(i,j));
           if(isPrime(board.get(i, j)) === true) {
-            console.log('test')
             return false;
           }
           break;
@@ -251,6 +267,7 @@ function checkBoard() {
       }
     }
   }
+  alert("Level complete!");
   return true;
 }
 
@@ -286,9 +303,9 @@ function move(direction) {
       }
       break;
   }
-  console.log(gameState.xPos + ", " + gameState.yPos);
 }
 
+// function to check for primes in prime game mode
 function isPrime(value) {
   for (let i = 2; i < value; i++) {
     if (value % i === 0) {
@@ -298,6 +315,16 @@ function isPrime(value) {
   return true;
 }
 
-function rightAnswer() {
 
+function gameOver() {
+  let input = prompt("Game over!  Your score is " +gameState.score+ " -- great job!  Would you like to play again? (y/n)");
+  if (input === "y") {
+    gameState.level = 0;
+    gameState.score = 0;
+    gameState.lives = 4;
+    newGame();
+  }
+  if (input === "n") {
+    location.reload();
+  }
 }

@@ -37,10 +37,23 @@ h2 {
   font-size: 25px;
 }
 
+
+
+#instructions {
+  text-decoration: underline;
+}
+
+h3 {
+  margin: -5px 0px -5px 3px;
+  color: white;
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 15px;
+}
+
 .heading {
   text-align: center;
   font-family: 'Ubuntu', sans-serif;
-  margin: 0 0 -20px 0;
+  margin: 0px 0 -20px 0;
   color: white;
 }
 
@@ -58,9 +71,9 @@ div {
 
 button {
   font-size: 20px;
-  margin: 60px auto 30px auto;
+  margin: 90px auto 30px auto;
   display: block;
-  padding: 10px;
+  padding: 20px;
   color: white;
   font-family: 'Ubuntu', sans-serif;
   background-color: rgb(250, 68, 0);
@@ -68,5 +81,5 @@ button {
 
 #lives {
   float: right;
-  margin: 0 60px 0 0;
+  margin: 0px 60px 0 0;
 }
