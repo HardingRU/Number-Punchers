@@ -17,6 +17,9 @@ let factors2 = [18, 24, 42];
 let multiples1 = [2, 3, 4];
 let multiples2 = [5, 6, 8];
 
+//variable will keep track of last gameType, to help prevent duplication
+let lastGameType = 5;
+
 // create initial (empty) board;
 let board;
 
@@ -64,10 +67,40 @@ function newGame() {
   gameState.level += 1;
   gameState.xPos = 0;
   gameState.yPos = 0;
-  gameState.gameType = randInt(3);
+  checkForDup();
   board = createBoard();
   return board;
 
+}
+
+// this function checks the last levels gameType and ensures that the new game is of a different type
+function checkForDup() {
+  let proposedGameType;
+  if (lastGameType === 5) {
+    gameState.gameType = randInt(3);
+  }
+  else if (lastGameType === 1) {
+    proposedGameType = randInt(3);
+    while (proposedGameType === lastGameType) {
+      proposedGameType = randInt(3);
+    }
+    gameState.gameType = proposedGameType;
+  }
+  else if (lastGameType === 2) {
+    proposedGameType = randInt(3);
+    while (proposedGameType === lastGameType) {
+      proposedGameType = randInt(3);
+    }
+    gameState.gameType = proposedGameType;
+  }
+  else if (lastGameType === 3){
+    proposedGameType = randInt(3);
+    while (proposedGameType === lastGameType) {
+      proposedGameType = randInt(3);
+    }
+    gameState.gameType = proposedGameType;
+  }
+  lastGameType = gameState.gameType;
 }
 
 //logic to create gameboards for levels 1-5
