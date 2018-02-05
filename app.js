@@ -11,13 +11,14 @@ let gameState = {
   yPos: 0
 }
 
-//these are the potential target numbers (see: gameState) for level 1-5 (factors1/multiples1) and 6-10 (f2/m2)
+// these are the potential target numbers (see: gameState) for level 1-5 (factors1/multiples1) and 6-10 (f2/m2)
 let factors1 = [15, 20, 30];
 let factors2 = [18, 24, 42];
 let multiples1 = [2, 3, 4];
 let multiples2 = [5, 6, 8];
 
-//variable will keep track of last gameType, to help prevent duplication
+// variable will keep track of last gameType, to help prevent duplication
+// 5 is a placeholder which lets the board create process know it is the first round, and no duplication is possible
 let lastGameType = 5;
 
 // create initial (empty) board;
@@ -220,7 +221,7 @@ function placeBoard(board, gameType) {
 // add the Rock to div as he moves around
 function replaceDiv(id) {
   $("#"+id).text("");
-  $("#"+id).html('<img src="https://image.ibb.co/cWWYKR/Webp_net_resizeimage.jpg">');
+  $("#"+id).html('<img src="https://image.ibb.co/jGtR5c/the_rock_bckgrnd.png">');
   $("#"+id).css("padding", "17px 0 17px 0")
 }
 
@@ -257,7 +258,12 @@ function checkAnswer() {
       let levelClear = checkBoard(gameState, board);
       // if the game is over create a new level
       if(levelClear === true) {
-        newGame(gameState);
+        if (gameState.level === 10) {
+          gameWon();
+        }
+        else {
+          newGame();
+        }
       }
     }
     // logic to proceed on wrong answer
@@ -275,7 +281,12 @@ function checkAnswer() {
       let levelClear = checkBoard(gameState, board);
       // if the game is over create a new level
       if(levelClear === true) {
-        newGame(gameState);
+        if (gameState.level === 10) {
+          gameWon();
+        }
+        else {
+          newGame(gameState);
+        }
       }
     }
     else {
@@ -292,7 +303,12 @@ function checkAnswer() {
       let levelClear = checkBoard(gameState, board);
       // if the game is over create a new level
       if(levelClear === true) {
-      newGame();
+        if (gameState.level === 10) {
+          gameWon();
+        }
+        else {
+          newGame();
+        }
       }
     }
     else {
@@ -413,4 +429,9 @@ function gameOver() {
   if (input === "n") {
     location.reload();
   }
+}
+
+function gameWon() {
+  gameState.score = gameState.score + (gameState.lives * 200);
+  alert("Game is over, you have won with a score of " + gameState.score +" -- congratulations!");
 }
