@@ -8,7 +8,9 @@ let gameState = {
   number: 0,
   gameType: 0,
   xPos: 0,
-  yPos: 0
+  yPos: 0,
+  badYPos: 2,
+  badXPos: 2
 }
 
 // these are the potential target numbers (see: gameState) for level 1-5 (factors1/multiples1) and 6-10 (f2/m2)
@@ -16,6 +18,8 @@ let factors1 = [15, 20, 30];
 let factors2 = [18, 24, 42];
 let multiples1 = [2, 3, 4];
 let multiples2 = [5, 6, 8];
+
+let nInterval;
 
 // variable will keep track of last gameType, to help prevent duplication
 // 5 is a placeholder which lets the board create process know it is the first round, and no duplication is possible
@@ -68,6 +72,8 @@ function newGame() {
   gameState.level += 1;
   gameState.xPos = 0;
   gameState.yPos = 0;
+  gameState.badYPos = 2;
+  gameState.badXPos = 2;
   checkForDup();
   board = createBoard();
   return board;
@@ -211,11 +217,12 @@ function placeBoard(board, gameType) {
 
       $("main").append("<article id=art"+i+">");
       for (let j = 0; j < board.height; j++) {
-        // console.log(board.get(i, j));
           $("#art"+i).append("<div id="+i+"_"+j+" class=col"+j+">"+board.get(i, j)+"</div>");
       }
     }
     replaceDiv("0_0");
+    replaceBadDiv("2_2");
+    badGuy();
 }
 
 // add the Rock to div as he moves around
@@ -225,11 +232,23 @@ function replaceDiv(id) {
   $("#"+id).css("padding", "17px 0 17px 0")
 }
 
+function replaceBadDiv(id) {
+  $("#"+id).text("");
+  $("#"+id).html('<img src="https://image.ibb.co/jd7EQc/dino_scaled.jpg">');
+  $("#"+id).css("padding", "17px 0 17px 0")
+}
+
 // remove the Rock from div as he moves to next, and replace the value as needed
 function fixDiv(id, num) {
   $("#"+id+" > img").remove();
-  $("#"+id).text("" + num);
-  $("#"+id).css("padding","42px 0 42px 0");
+  if (num === "") {
+    $("#"+id).text("" + num);
+    $("#"+id).css("padding","51px 0 51px 0");
+  }
+  else {
+    $("#"+id).text("" + num);
+    $("#"+id).css("padding","42px 0 42px 0");
+  }
 }
 
 // this function creates random integers, used to create board, as well as select gameType, and target numbers
@@ -243,7 +262,7 @@ function randInt(ceiling) {
 function checkAnswer() {
   let answer = board.get(gameState.xPos, gameState.yPos);
   // checking for empty space, nothing should happen here
-  if (answer === "_") {
+  if (answer === "") {
     return;
   }
 
@@ -254,10 +273,11 @@ function checkAnswer() {
     if (answer % gameState.number === 0) {
       gameState.score += 50;
       $("#score").text("Score: " + gameState.score);
-      board.set(gameState.xPos, gameState.yPos, "_");
+      board.set(gameState.xPos, gameState.yPos, "");
       let levelClear = checkBoard(gameState, board);
       // if the game is over create a new level
       if(levelClear === true) {
+        stopBad();
         if (gameState.level === 10) {
           gameWon();
         }
@@ -277,10 +297,11 @@ function checkAnswer() {
     if (gameState.number % answer === 0) {
       gameState.score += 50;
       $("#score").text("Score: " + gameState.score);
-      board.set(gameState.xPos, gameState.yPos, "_");
+      board.set(gameState.xPos, gameState.yPos, "");
       let levelClear = checkBoard(gameState, board);
       // if the game is over create a new level
       if(levelClear === true) {
+        stopBad();
         if (gameState.level === 10) {
           gameWon();
         }
@@ -299,10 +320,11 @@ function checkAnswer() {
     if(isPrime(answer) === true) {
       gameState.score += 50;
       $("#score").text("Score: " + gameState.score);
-      board.set(gameState.xPos, gameState.yPos, "_");
+      board.set(gameState.xPos, gameState.yPos, "");
       let levelClear = checkBoard(gameState, board);
       // if the game is over create a new level
       if(levelClear === true) {
+        stopBad();
         if (gameState.level === 10) {
           gameWon();
         }
@@ -368,7 +390,6 @@ function checkBoard() {
   else{
     alert("Level complete!");
   }
-
   return true;
 }
 
@@ -401,10 +422,61 @@ function move(direction) {
       if(gameState.xPos != 5) {
       gameState.xPos += 1;
       replaceDiv(gameState.xPos + "_" + gameState.yPos);
-      fixDiv(((gameState.xPos - 1 ) + "_" + gameState.yPos), (board.get((gameState.xPos + - 1 ), gameState.yPos)));
+      fixDiv(((gameState.xPos - 1 ) + "_" + gameState.yPos), (board.get((gameState.xPos - 1 ), gameState.yPos)));
       }
     break;
   }
+  checkCollision();
+}
+
+
+function badGuy() {
+  // move bad guy every second
+  nInterval = setInterval(moveBad, 1000);
+}
+// function to moveBadguy
+
+function moveBad() {
+    console.log("inside moveBad");
+    // figure out  movement direction, 1 = left, 2 = right, 3 = up, 4 = down
+    let direction = randInt(4);
+    switch(direction) {
+      case(1):
+        if(gameState.badYPos != 0) {
+        gameState.badYPos -= 1;
+        replaceBadDiv(gameState.badXPos + "_" + gameState.badYPos);
+        fixDiv((gameState.badXPos + "_" + (gameState.badYPos + 1)), (board.get(gameState.badXPos, (gameState.badYPos + 1))));
+        }
+      break;
+      case(2):
+        if(gameState.badYPos != 4) {
+        gameState.badYPos += 1;
+        replaceBadDiv(gameState.badXPos + "_" + gameState.badYPos);
+        fixDiv((gameState.badXPos + "_" + (gameState.badYPos - 1)), (board.get(gameState.badXPos,(gameState.badYPos - 1))));
+        }
+      break;
+      case(3):
+        if(gameState.badXPos != 0) {
+        gameState.badXPos -= 1;
+        replaceBadDiv(gameState.badXPos + "_" + gameState.badYPos);
+        fixDiv(((gameState.badXPos + 1 ) + "_" + gameState.badYPos), (board.get((gameState.badXPos + 1 ), gameState.badYPos)));
+        }
+      break;
+      case(4):
+        if(gameState.badXPos != 5) {
+        gameState.badXPos += 1;
+        replaceBadDiv(gameState.badXPos + "_" + gameState.badYPos);
+        fixDiv(((gameState.badXPos - 1 ) + "_" + gameState.badYPos), (board.get((gameState.badXPos - 1 ), gameState.badYPos)));
+        }
+      break;
+    }
+    checkCollision();
+
+}
+
+//function to stop bad guy movement on course completion
+function stopBad() {
+  clearInterval(nInterval);
 }
 
 // function to check for primes in prime game mode
@@ -431,7 +503,35 @@ function gameOver() {
   }
 }
 
+// end of game, after level 10
 function gameWon() {
   gameState.score = gameState.score + (gameState.lives * 200);
   alert("Game is over, you have won with a score of " + gameState.score +" -- congratulations!");
+}
+
+// called whenever player or CPU moves, to see if they have collided
+function checkCollision() {
+  let playerPos = gameState.xPos + "_" + gameState.yPos;
+  let badPos = gameState.badXPos + "_" + gameState.badYPos;
+  let xx = gameState.xPos;
+  let yy = gameState.yPos;
+  if (playerPos === badPos) {
+    stopBad();
+    alert("Dino Smash!  The enemy has caught you, and taken 1 life");
+    gameState.lives -= 1;
+    $("#lives").text("Lives: " + gameState.lives);
+    if (gameState.lives === 0) {
+      gameOver();
+    }
+    else {
+      gameState.xPos = 0;
+      gameState.yPos = 0;
+      replaceDiv("0_0");
+      gameState.badXPos = 2;
+      gameState.badYPos = 2;
+      replaceBadDiv("2_2")
+      badGuy();
+      fixDiv(playerPos, board.get(xx, yy));
+    }
+  }
 }
