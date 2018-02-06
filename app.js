@@ -11,7 +11,7 @@ let gameState = {
   yPos: 0,
   badYPos: 2,
   badXPos: 2
-}
+};
 
 // these are the potential target numbers (see: gameState) for level 1-5 (factors1/multiples1) and 6-10 (f2/m2)
 let factors1 = [15, 20, 30];
@@ -77,7 +77,6 @@ function newGame() {
   checkForDup();
   board = createBoard();
   return board;
-
 }
 
 // this function checks the last levels gameType and ensures that the new game is of a different type
@@ -498,8 +497,11 @@ function gameOver() {
     gameState.lives = 4;
     newGame();
   }
-  if (input === "n") {
+  else if (input === "n") {
     location.reload();
+  }
+  else {
+    gameOver();
   }
 }
 
