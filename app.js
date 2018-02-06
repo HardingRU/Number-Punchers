@@ -76,6 +76,10 @@ function newGame() {
   gameState.badXPos = 2;
   checkForDup();
   board = createBoard();
+  if (checkBoard() === true) {
+    gameState.level -= 1;
+    newGame();
+  }
   return board;
 }
 
@@ -233,7 +237,7 @@ function replaceDiv(id) {
 
 function replaceBadDiv(id) {
   $("#"+id).text("");
-  $("#"+id).html('<img src="https://image.ibb.co/jd7EQc/dino_scaled.jpg">');
+  $("#"+id).html('<img src="https://image.ibb.co/ga8Cyx/dino_scaled.png">');
   $("#"+id).css("padding", "17px 0 17px 0")
 }
 
@@ -355,7 +359,7 @@ function checkBoard() {
   for(let i = 0; i < board.width; i++) {
     for(let j = 0; j < board.height; j++) {
       //ignore _ strings, those are correct previous answers
-      if(board.get(i, j) === "_") {
+      if(board.get(i, j) === "") {
       }
       else {
         switch(gameState.gameType) {
