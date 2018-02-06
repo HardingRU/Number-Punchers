@@ -426,7 +426,8 @@ function move(direction) {
       }
     break;
   }
-  checkCollision();
+  tempVar = setTimeout(checkCollision, 50);
+
 }
 
 
@@ -437,7 +438,6 @@ function badGuy() {
 // function to moveBadguy
 
 function moveBad() {
-    console.log("inside moveBad");
     // figure out  movement direction, 1 = left, 2 = right, 3 = up, 4 = down
     let direction = randInt(4);
     switch(direction) {
@@ -470,7 +470,7 @@ function moveBad() {
         }
       break;
     }
-    checkCollision();
+    tempVar = setTimeout(checkCollision, 50);
 
 }
 
