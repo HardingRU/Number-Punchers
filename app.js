@@ -13,6 +13,9 @@ let gameState = {
   badXPos: 2
 };
 
+let myStorage = window.localStorage;
+
+
 // these are the potential target numbers (see: gameState) for level 1-5 (factors1/multiples1) and 6-10 (f2/m2)
 let factors1 = [15, 20, 30];
 let factors2 = [18, 24, 42];
@@ -49,6 +52,7 @@ class Gameboard {
     this.content[y * this.width + x] = value;
   }
 }
+
 
 // create first board, remove landing screen
 let $start = $("#startButton");
@@ -350,6 +354,9 @@ function wrongAnswer() {
   $("#lives").text("Lives: " + gameState.lives);
   alert("That answer is incorrect!");
   if(gameState.lives === 0) {
+    alert("Game over!  Your score is " +gameState.score+ " -- great job!");
+  //  myStorage.setItem(name, gameState.score);
+  //  console.log(myStorage.getItem(name));
     gameOver();
     return;
   }
@@ -429,7 +436,7 @@ function move(direction) {
       }
     break;
   }
-  tempVar = setTimeout(checkCollision, 50);
+  tempVar = setTimeout(checkCollision, 10);
 
 }
 
@@ -473,7 +480,7 @@ function moveBad() {
         }
       break;
     }
-    tempVar = setTimeout(checkCollision, 50);
+    tempVar = setTimeout(checkCollision, 10);
 
 }
 
@@ -494,7 +501,7 @@ function isPrime(value) {
 
 // handle gameOver when lives hits 0
 function gameOver() {
-  let input = prompt("Game over!  Your score is " +gameState.score+ " -- great job!  Would you like to play again? (y/n)");
+  let input = prompt("Would you like to play again? (y/n)");
   if (input === "y") {
     gameState.level = 0;
     gameState.score = 0;
@@ -513,6 +520,7 @@ function gameOver() {
 function gameWon() {
   gameState.score = gameState.score + (gameState.lives * 200);
   alert("Game is over, you have won with a score of " + gameState.score +" -- congratulations!");
+  location.reload();
 }
 
 // called whenever player or CPU moves, to see if they have collided
@@ -527,6 +535,9 @@ function checkCollision() {
     gameState.lives -= 1;
     $("#lives").text("Lives: " + gameState.lives);
     if (gameState.lives === 0) {
+      let input = prompt("Game over!  Your score is " +gameState.score+ " -- great job! Would you like to continue?")
+      //myStorage.setItem(name, gameState.score);
+      //console.log(myStorage.getItem(name));
       gameOver();
     }
     else {

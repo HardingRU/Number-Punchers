@@ -17,7 +17,7 @@ The only other real difficult part I see is around the logic.  Assuming that the
 Last, not sure if I'll have ability to save high scores or not.
 
 ## Phases of Completion
-1) Create the logic in straightforward fashion (done)
+1) Create the logic in straightforward fashion (mostly done, finish friday)
 2) Refactor Logic (Friday)
 3) Create the visuals (Started, Finish Monday)
 4) Add bells and whistles (high score, bad guys) *optional* (Tuesday)
